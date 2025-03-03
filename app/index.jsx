@@ -11,8 +11,9 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text className="text-green-500 bg-yellow-400 font-bold text-2xl">Edit app/index.tsx to edit this screen.</Text>
+      <Text className="text-2xl font-bold text-green-500 bg-yellow-400">Edit app/index.tsx to edit this screen.</Text>
       <Text style={styles.div}>This is the sample text</Text>
+      <button className="btn btn-primary">Click me</button>
     </View>
   );
 }
