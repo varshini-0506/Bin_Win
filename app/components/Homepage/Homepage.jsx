@@ -102,7 +102,7 @@ export default function HomePage({ navigation }) {
   <View className="bg-white px-4 py-2 rounded-full shadow-md mr-2 border border-gray-300 relative">
     <Animated.Text
       style={{ opacity: textAnimation }}
-      className="text-sm text-gray-900 font-semibold"
+      className="text-sm text-gray-700 font-semibold"
     >
       Talk with Binnie
     </Animated.Text>
