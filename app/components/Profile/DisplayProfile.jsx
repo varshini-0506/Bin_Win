@@ -116,9 +116,9 @@ const DisplayProfile = () => {
       <BarChart
         data={{
           labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-          datasets: [{ data: usageData || [1, 2, 1, 3, 4, 2, 5] }],
+          datasets: [{ data: usageData || [1, 2, 7, 3, 4, 0, 5] }],
         }}
-        width={Dimensions.get("window").width - 40}
+        width={Dimensions.get("window").width - 10}
         height={220}
         yAxisLabel=""
         chartConfig={{
