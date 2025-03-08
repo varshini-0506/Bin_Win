@@ -1,7 +1,7 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import SplashScreen from "./Homepage/SplshScreen";
+import SplashScreen from "./Homepage/SplashScreen";
 import HomeScreen from "./Homepage/Homepage";
 import DisplayProfile from "./Profile/DisplayProfile";
 import Chatbot from "./Chatbot/Chatbot";
