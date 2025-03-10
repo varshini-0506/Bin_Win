@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator, Image, Animated } from "react-native";
-import axios from "axios";
 import { Home, User, Trophy, Gamepad, ArrowLeft } from "lucide-react-native";
+import { StyleSheet } from "react-native";
 
 const GEMINI_API_KEY = "AIzaSyBIhcR9zftIUImxYcgVGx6ZJWLlZABnfF8"; // Replace with actual API key
 
@@ -29,24 +29,33 @@ export default function QuizComponent({ navigation }) {
   const fetchQuizQuestions = async () => {
     setLoading(true);
     try {
-      const response = await axios.post(
-        "https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent",
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`,
         {
-          contents: [{ parts: [{ text: "Generate 5 multiple-choice quiz questions on waste segregation and recycling in JSON format. Each question should have a 'question', 'options' (array), and 'answer' (string)." }] }],
-        },
-        { params: { key: GEMINI_API_KEY } }
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: "Generate 5 multiple-choice quiz questions on waste segregation and recycling in JSON format. Each question should have a 'question', 'options' (array), and 'answer' (string)." }] }]
+          }),
+        }
       );
-
-      console.log("Raw API Response:", JSON.stringify(response.data, null, 2));
-
-      const aiResponse = response.data.candidates?.[0]?.content?.parts?.[0]?.text;
+  
+      if (!response.ok) throw new Error("Failed to fetch quiz questions");
+  
+      const data = await response.json();
+      console.log("Raw API Response:", JSON.stringify(data, null, 2));
+  
+      const aiResponse = data.candidates?.[0]?.content?.parts?.[0]?.text;
       if (!aiResponse) throw new Error("No response from AI");
-
+  
       try {
-        const jsonString = aiResponse.replace("```json", "").replace("```", "").trim();
-        const parsedQuestions = JSON.parse(jsonString);
-        if (!Array.isArray(parsedQuestions)) throw new Error("Invalid question format");
+        const cleanedResponse = aiResponse.replace(/```json|```/g, "").trim();
+        const parsedQuestions = JSON.parse(cleanedResponse);
 
+        if (!Array.isArray(parsedQuestions)) throw new Error("Invalid question format");
+  
         setQuestions(parsedQuestions);
         setIndex(0);
         setScore(0);
@@ -61,6 +70,7 @@ export default function QuizComponent({ navigation }) {
       setLoading(false);
     }
   };
+  
 
   const handleAnswer = (option) => {
     if (selected !== null) return;
@@ -81,84 +91,255 @@ export default function QuizComponent({ navigation }) {
   };
 
   return (
-    <View className="flex-1 bg-[#DFFFD6] px-5">
-      {/* 🟢 Top Navigation Bar */}
-      <View className="flex-row items-center justify-between px-5 py-3">
-        <TouchableOpacity onPress={() => navigation.navigate("Home")} className="p-2">
+    <View style={styles.container}>
+      {/* Top Navigation Bar */}
+      <View style={styles.topNavBar}>
+        <TouchableOpacity onPress={() => navigation.navigate("Home")} style={styles.backButton}>
           <ArrowLeft size={28} color="#379237" />
         </TouchableOpacity>
-        <View className="flex-row items-center space-x-2">
-          <Text className="text-3xl font-extrabold font-mono text-[#379237]">BinWin</Text>
-          <Image source={{ uri: "https://ik.imagekit.io/varsh0506/binwin_mascot-removebg-preview.png" }} className="w-10 h-10" />
+        <View style={styles.titleContainer}>
+          <Text style={styles.titleText}>BinWin</Text>
+          <Image source={{ uri: "https://ik.imagekit.io/varsh0506/binwin_mascot-removebg-preview.png" }} style={styles.mascotImage} />
         </View>
       </View>
 
-      {/* 🟢 Quiz Content */}
-      <View className="flex-1 justify-center items-center">
+      {/* Quiz Content */}
+      <View style={styles.quizContent}>
         {loading ? (
           <ActivityIndicator size="large" color="#379237" />
         ) : quizCompleted ? (
-          <View className="items-center">
-            <Text className="text-3xl font-extrabold text-green-700 font-mono">
+          <View style={styles.quizCompleted}>
+            <Text style={styles.congratulationsText}>
               {score >= 4 ? "🎉 Congratulations! 🎉" : "Quiz Completed!"}
             </Text>
-            <Text className="text-lg mt-2 font-mono">Your Score: {score} / {questions.length}</Text>
-            <TouchableOpacity className="mt-6 py-3 px-6 bg-green-500 rounded-lg shadow-lg" onPress={fetchQuizQuestions}>
-              <Text className="text-white text-lg font-mono">Retry</Text>
+            <Text style={styles.scoreText}>
+              Your Score: {score} / {questions.length}
+            </Text>
+            <TouchableOpacity style={styles.retryButton} onPress={fetchQuizQuestions}>
+              <Text style={styles.retryText}>Retry</Text>
             </TouchableOpacity>
-            <TouchableOpacity className="mt-3 py-3 px-6 bg-gray-400 rounded-lg shadow-lg" onPress={() => navigation.navigate("Home")}> 
-              <Text className="text-white text-lg font-mono">Back to Home</Text>
+            <TouchableOpacity style={styles.backToHomeButton} onPress={() => navigation.navigate("Home")}>
+              <Text style={styles.backToHomeText}>Back to Home</Text>
             </TouchableOpacity>
           </View>
         ) : (
           questions.length > 0 && questions[index] ? (
-            <Animated.View style={{ opacity: fadeAnim }} className="w-full p-5 bg-white rounded-xl shadow-lg">
-              <Text className="text-xl font-extrabold text-[#379237] text-center font-mono">{questions[index].question}</Text>
+            <Animated.View style={[{ opacity: fadeAnim }, styles.questionContainer]}>
+              <Text style={styles.questionText}>{questions[index].question}</Text>
               {questions[index].options.map((option, i) => (
                 <TouchableOpacity
                   key={i}
-                  className={`py-3 px-4 my-3 rounded-lg shadow-md text-center transition-all duration-500 ${
+                  style={[
+                    styles.optionButton,
                     selected === option
                       ? option === questions[index].answer
-                        ? "bg-green-500 scale-105"
-                        : "bg-red-500 scale-95"
-                      : "bg-gray-100"
-                  }`}
+                        ? styles.correctOption
+                        : styles.incorrectOption
+                      : styles.defaultOption,
+                  ]}
                   onPress={() => handleAnswer(option)}
                 >
-                  <Text className={`text-lg font-mono font-semibold text-center ${
-                    selected === option ? "text-white" : "text-gray-800"
-                  }`}>
+                  <Text style={[styles.optionText, selected === option ? styles.selectedText : styles.defaultText]}>
                     {option}
                   </Text>
                 </TouchableOpacity>
               ))}
             </Animated.View>
           ) : (
-            <Text className="text-lg text-red-500 font-mono">No questions available.</Text>
+            <Text style={styles.noQuestionsText}>No questions available.</Text>
           )
         )}
       </View>
 
-      {/* 🟢 Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 bg-white py-4 shadow-lg flex-row justify-around">
-        <TouchableOpacity className="items-center" onPress={() => navigation.navigate("DisplayProfile")}> 
+      {/* Bottom Navigation Bar */}
+      <View style={styles.bottomNavBar}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("DisplayProfile")}>
           <User size={26} color="gray" />
-          <Text className="text-gray-700 text-xs font-mono">Profile</Text>
+          <Text style={styles.navText}>Profile</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => navigation.navigate("Home")}> 
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
           <Home size={26} color="#58CC02" />
-          <Text className="text-[#58CC02] text-xs font-mono">Home</Text>
+          <Text style={styles.activeNavText}>Home</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => navigation.navigate("Leaderboard")}> 
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Leaderboard")}>
           <Trophy size={26} color="#F4A900" />
-          <Text className="text-gray-700 text-xs font-mono">Leaderboard</Text>
+          <Text style={styles.navText}>Leaderboard</Text>
         </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => navigation.navigate("Gamified")}> 
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Gamified")}>
           <Gamepad size={26} color="#379237" />
-          <Text className="text-gray-700 text-xs font-mono">Game</Text>
+          <Text style={styles.navText}>Game</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#DFFFD6',
+    padding: 20,
+  },
+  topNavBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingVertical: 12,
+  },
+  backButton: {
+    padding: 8,
+  },
+  titleContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  titleText: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    color: '#379237',
+    fontFamily: 'monospace',
+  },
+  mascotImage: {
+    width: 50,
+    height: 50,
+    marginLeft: 8,
+  },
+  quizContent: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  quizCompleted: {
+    alignItems: 'center',
+  },
+  congratulationsText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#34C759',
+    fontFamily: 'monospace',
+  },
+  scoreText: {
+    fontSize: 18,
+    color: '#666',
+    fontFamily: 'monospace',
+    marginTop: 16,
+  },
+  retryButton: {
+    backgroundColor: '#34C759',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginTop: 24,
+  },
+  retryText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'monospace',
+  },
+  backToHomeButton: {
+    backgroundColor: '#ccc',
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    marginTop: 16,
+  },
+  backToHomeText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'monospace',
+  },
+  questionContainer: {
+    width: '100%',
+    padding: 20,
+    backgroundColor: 'white',
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  questionText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#379237',
+    fontFamily: 'monospace',
+    textAlign: 'center',
+  },
+  optionButton: {
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 12,
+    marginVertical: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  defaultOption: {
+    backgroundColor: '#f0f0f0',
+  },
+  correctOption: {
+    backgroundColor: '#34C759',
+    transform: [{ scale: 1.05 }],
+  },
+  incorrectOption: {
+    backgroundColor: '#ff3737',
+    transform: [{ scale: 0.95 }],
+  },
+  optionText: {
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'monospace',
+  },
+  selectedText: {
+    color: 'white',
+  },
+  defaultText: {
+    color: '#444',
+  },
+  noQuestionsText: {
+    fontSize: 18,
+    color: '#ff3737',
+    fontFamily: 'monospace',
+  },
+  bottomNavBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: 'white',
+    paddingVertical: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  navItem: {
+    alignItems: 'center',
+  },
+  navText: {
+    fontSize: 12,
+    color: '#666',
+    fontFamily: 'monospace',
+  },
+  activeNavText: {
+    fontSize: 12,
+    color: '#58CC02',
+    fontFamily: 'monospace',
+  },
+});

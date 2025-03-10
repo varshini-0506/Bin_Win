@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { View, Text, Image, TouchableOpacity, Animated, ScrollView } from "react-native";
+import React, { useState, useEffect } from "react";
+import { View, Text, Image, TouchableOpacity, Animated, ScrollView, StyleSheet } from "react-native";
 import { Home, User, Trophy, Gamepad, Menu, LogOut, PlayCircle, UserPlus } from "lucide-react-native";
 import EducationalVideo from "./EducationalVideo"; // Fix the video loading issue
 
@@ -45,41 +45,41 @@ export default function HomePage({ navigation }) {
   }, []);
 
   return (
-    <View className="flex-1 bg-[#DFFFD6] relative">
+    <View style={styles.container}>
       {/* Top Section: Sidebar Menu & Title */}
-      <View className="flex-row items-center justify-between px-5 py-3">
+      <View style={styles.topSection}>
         <TouchableOpacity
           onPress={() => setSidebarOpen(!sidebarOpen)}
-          className="bg-[#F9F9F9] p-3 rounded-lg shadow"
+          style={styles.menuButton}
         >
           <Menu size={28} color="#379237" />
         </TouchableOpacity>
 
-        <Text className="text-4xl font-bold text-[#379237] tracking-wide font-[monospace]">
+        <Text style={styles.titleText}>
           BinWin
         </Text>
       </View>
 
       {/* Welcome Section */}
-      <View className="px-5 mt-4">
-        <Text className="text-3xl font-extrabold text-[#379237] font-[monospace]">
+      <View style={styles.welcomeSection}>
+        <Text style={styles.welcomeTitle}>
           Welcome to BinWin!
         </Text>
-        <Text className="text-gray-700 text-md leading-relaxed font-medium font-[monospace]">
-          BinWin is your interactive learning hub for <Text className="font-bold">smart recycling</Text>! 
+        <Text style={styles.welcomeDescription}>
+          BinWin is your interactive learning hub for <Text style={styles.boldText}>smart recycling</Text>! 
           Watch educational videos, test your knowledge with quizzes, and climb the leaderboard 
-          to become a <Text className="font-bold">waste warrior</Text>. 🌱♻️
+          to become a <Text style={styles.boldText}>waste warrior</Text>. 🌱♻️
         </Text>
       </View>
 
       {/* Scrollable Content */}
-      <ScrollView className="flex-1" contentContainerStyle={{ paddingBottom: 100 }}>
+      <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollViewContent}>
         {/* Educational Video Card */}
-        <View className="bg-white mx-5 mt-6 p-4 rounded-2xl shadow-lg">
-          <Text className="text-lg font-semibold text-gray-800 mb-2 font-[Fredoka]">
+        <View style={styles.videoCard}>
+          <Text style={styles.videoTitle}>
             Educational Video
           </Text>
-          <View className="rounded-xl overflow-hidden shadow-md bg-gray-200">
+          <View style={styles.videoContainer}>
             <EducationalVideo />
           </View>
         </View>
@@ -87,63 +87,75 @@ export default function HomePage({ navigation }) {
         {/* Start Quiz Button */}
         <TouchableOpacity
           onPress={() => navigation.navigate("QuizComponent")}
-          className="mt-6 mx-5 bg-green-500 p-4 rounded-full shadow-lg flex-row items-center justify-center"
+          style={styles.startQuizButton}
         >
-          <PlayCircle size={26} color="white" className="mr-2" />
-          <Text className="text-center text-white text-lg font-semibold font-[Fredoka]">
+          <PlayCircle size={26} color="white" style={{ marginRight: 8 }} />
+          <Text style={styles.startQuizText}>
             Start Quiz
           </Text>
         </TouchableOpacity>
       </ScrollView>
 
-{/* Sidebar with Overlay */}
-{sidebarOpen && (
-  <View className="absolute left-0 top-0 w-56 h-full bg-[#DFFFD6] shadow-lg p-5 rounded-r-2xl border-r-4 border-[#379237]">
-    <TouchableOpacity onPress={() => setSidebarOpen(false)} className="mb-5 flex-row items-center">
-      <Text className="text-lg font-bold text-[#379237] font-[monospace]">✖ Close</Text>
-    </TouchableOpacity>
+      {/* Sidebar with Overlay */}
+      {sidebarOpen && (
+        <View style={styles.sidebar}>
+          <TouchableOpacity onPress={() => setSidebarOpen(false)} style={styles.closeButton}>
+            <Text style={styles.closeButtonText}>
+              ✖ Close
+            </Text>
+          </TouchableOpacity>
 
-    <TouchableOpacity className="flex-row items-center space-x-3 mb-6 p-3" onPress={() => navigation.navigate("Home")}>
-      <Home size={26} color="#379237" />
-      <Text className="text-lg text-[#379237] font-semibold font-[monospace]">Home</Text>
-    </TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("Home")}>
+            <Home size={26} color="#379237" />
+            <Text style={styles.sidebarText}>
+              Home
+            </Text>
+          </TouchableOpacity>
 
-    <TouchableOpacity className="flex-row items-center space-x-3 p-3 mt-4" onPress={() => navigation.navigate("Leaderboard")}>
-      <Trophy size={26} color="#379237" />
-      <Text className="text-lg text-[#379237] font-semibold font-[monospace]">Leaderboard</Text>
-    </TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("Leaderboard")}>
+            <Trophy size={26} color="#379237" />
+            <Text style={styles.sidebarText}>
+              Leaderboard
+            </Text>
+          </TouchableOpacity>
 
-    <TouchableOpacity className="flex-row items-center space-x-3 p-3 mt-4" onPress={() => navigation.navigate("Gamified")}>
-      <Gamepad size={26} color="#379237" />
-      <Text className="text-lg text-[#379237] font-semibold font-[monospace]">Game</Text>
-    </TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("Gamified")}>
+            <Gamepad size={26} color="#379237" />
+            <Text style={styles.sidebarText}>
+              Game
+            </Text>
+          </TouchableOpacity>
 
-    <TouchableOpacity className="flex-row items-center space-x-3 p-3 mt-4" onPress={() => navigation.navigate("CreateProfile")}>
-      <UserPlus size={26} color="#379237" />
-      <Text className="text-lg text-[#379237] font-semibold font-[monospace]">Create Profile</Text>
-    </TouchableOpacity>
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("CreateProfile")}>
+            <UserPlus size={26} color="#379237" />
+            <Text style={styles.sidebarText}>
+              Create Profile
+            </Text>
+          </TouchableOpacity>
 
-    <TouchableOpacity className="flex-row items-center space-x-3 p-3 mt-4" onPress={() => console.log("Logging out")}>
-      <LogOut size={26} color="red" />
-      <Text className="text-lg text-red-600 font-semibold font-[monospace]">Logout</Text>
-    </TouchableOpacity>
-  </View>
-)}
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => console.log("Logging out")}>
+            <LogOut size={26} color="red" />
+            <Text style={styles.logoutText}>
+              Logout
+            </Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
       {/* Chatbot Button */}
       <TouchableOpacity
         onPress={() => navigation.navigate("Chatbot")}
-        className="absolute bottom-20 right-4 flex-row items-center"
+        style={styles.chatbotButton}
       >
         {/* Speech Bubble */}
-        <View className="bg-white px-4 py-2 rounded-full shadow-md mr-2 border border-gray-300 relative">
+        <View style={styles.speechBubble}>
           <Animated.Text
-            style={{ opacity: textAnimation }}
-            className="text-sm text-gray-700 font-semibold font-[Fredoka]"
+            style={[styles.speechText, { opacity: textAnimation }]}
           >
             Talk with Binnie
           </Animated.Text>
           {/* Arrow */}
-          <View className="absolute top-1/2 right-0 -translate-y-1/2 translate-x-4 w-6 h-6 bg-white rotate-45 border-t border-r border-gray-300"></View>
+          <View style={styles.arrow} />
         </View>
 
         {/* Mascot Image */}
@@ -152,30 +164,266 @@ export default function HomePage({ navigation }) {
             source={{
               uri: "https://ik.imagekit.io/varsh0506/binwin_mascot-removebg-preview.png",
             }}
-            className="w-14 h-14 rounded-full border-2 border-[#58CC02]"
+            style={styles.mascotImage}
           />
         </Animated.View>
       </TouchableOpacity>
 
       {/* Bottom Navigation Bar */}
-      <View className="absolute bottom-0 left-0 right-0 bg-[#F9F9F9] py-3 shadow-md flex-row justify-around">
-        <TouchableOpacity className="items-center" onPress={() => navigation.navigate("DisplayProfile")}>
+      <View style={styles.bottomNavBar}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("DisplayProfile")}>
           <User size={26} color="gray" />
-          <Text className="text-gray-700 text-xs font-[Fredoka]">Profile</Text>
+          <Text style={styles.navText}>
+            Profile
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => navigation.navigate("Home")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Home")}>
           <Home size={26} color="#58CC02" />
-          <Text className="text-[#58CC02] text-xs font-[Fredoka]">Home</Text>
+          <Text style={styles.activeNavText}>
+            Home
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => navigation.navigate("Leaderboard")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Leaderboard")}>
           <Trophy size={26} color="#F4A900" />
-          <Text className="text-gray-700 text-xs font-[Fredoka]">Leaderboard</Text>
+          <Text style={styles.navText}>
+            Leaderboard
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity className="items-center" onPress={() => navigation.navigate("Gamified")}>
+        <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate("Gamified")}>
           <Gamepad size={26} color="#379237" />
-          <Text className="text-gray-700 text-xs font-[Fredoka]">Game</Text>
+          <Text style={styles.navText}>
+            Game
+          </Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#DFFFD6',
+    position: 'relative',
+  },
+  topSection: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 12,
+  },
+  menuButton: {
+    backgroundColor: '#F9F9F9',
+    padding: 12,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  titleText: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#379237',
+    fontFamily: 'monospace',
+    letterSpacing: 2,
+  },
+  welcomeSection: {
+    paddingHorizontal: 20,
+    marginTop: 16,
+  },
+  welcomeTitle: {
+    fontSize: 24,
+    fontWeight: '900',
+    color: '#379237',
+    fontFamily: 'monospace',
+  },
+  welcomeDescription: {
+    color: '#444',
+    fontSize: 16,
+    fontFamily: 'monospace',
+  },
+  boldText: {
+    fontWeight: 'bold',
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollViewContent: {
+    paddingBottom: 100,
+  },
+  videoCard: {
+    backgroundColor: 'white',
+    marginHorizontal: 20,
+    marginTop: 24,
+    padding: 16,
+    borderRadius: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  videoTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#444',
+    fontFamily: 'Fredoka',
+    marginBottom: 8,
+  },
+  videoContainer: {
+    borderRadius: 12,
+    overflow: 'hidden',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    backgroundColor: '#ddd',
+  },
+  startQuizButton: {
+    backgroundColor: '#34C759',
+    marginHorizontal: 20,
+    marginTop: 24,
+    padding: 16,
+    borderRadius: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  startQuizText: {
+    color: 'white',
+    fontSize: 18,
+    fontWeight: '600',
+    fontFamily: 'Fredoka',
+  },
+  sidebar: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: 240,
+    height: '100%',
+    backgroundColor: '#DFFFD6',
+    shadowColor: '#000',
+    shadowOffset: { width: 2, height: 0 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    padding: 20,
+    borderRadius: 24,
+    borderRightWidth: 4,
+    borderRightColor: '#379237',
+  },
+  closeButton: {
+    marginBottom: 20,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  closeButtonText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#379237',
+    fontFamily: 'monospace',
+  },
+  sidebarItem: {
+    padding: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 16,
+  },
+  sidebarText: {
+    fontSize: 18,
+    color: '#379237',
+    fontWeight: '600',
+    fontFamily: 'monospace',
+    marginLeft: 12,
+  },
+  logoutText: {
+    fontSize: 18,
+    color: 'red',
+    fontWeight: '600',
+    fontFamily: 'monospace',
+    marginLeft: 12,
+  },
+  chatbotButton: {
+    position: 'absolute',
+    bottom: 120,
+    right: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  speechBubble: {
+    backgroundColor: 'white',
+    padding: 8,
+    borderRadius: 100,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    marginRight: 8,
+  },
+  speechText: {
+    fontSize: 14,
+    color: '#666',
+    fontWeight: '600',
+    fontFamily: 'Fredoka',
+  },
+  arrow: {
+    position: 'absolute',
+    top: '50%',
+    right: 0,
+    transform: [{ translateY: -8 }, { translateX: 8 }],
+    width: 24,
+    height: 24,
+    backgroundColor: 'white',
+    borderRightWidth: 2,
+    borderTopWidth: 2,
+    borderColor: '#ccc',
+    transform: [{ rotate: '45deg' }],
+  },
+  mascotImage: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    borderColor: '#58CC02',
+    borderWidth: 4,
+  },
+  bottomNavBar: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#F9F9F9',
+    paddingVertical: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  navItem: {
+    alignItems: 'center',
+  },
+  navText: {
+    fontSize: 12,
+    color: '#666',
+    fontFamily: 'Fredoka',
+  },
+  activeNavText: {
+    fontSize: 12,
+    color: '#58CC02',
+    fontFamily: 'Fredoka',
+  },
+});
