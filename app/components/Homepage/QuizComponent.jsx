@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, ActivityIndicator, Image, Animated } from "react-native";
 import { Home, User, Trophy, Gamepad, ArrowLeft } from "lucide-react-native";
 import { StyleSheet } from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const GEMINI_API_KEY = "AIzaSyBIhcR9zftIUImxYcgVGx6ZJWLlZABnfF8"; // Replace with actual API key
 
@@ -72,20 +73,48 @@ export default function QuizComponent({ navigation }) {
   };
   
 
-  const handleAnswer = (option) => {
+  const handleAnswer = async (option) => {
     if (selected !== null) return;
     setSelected(option);
 
-    if (option === questions[index].answer) {
+    const isCorrect = option === questions[index].answer;
+
+    if (isCorrect) {
       setScore((prevScore) => prevScore + 1);
     }
 
-    setTimeout(() => {
+    setTimeout(async () => {
       if (index + 1 < questions.length) {
         setIndex(index + 1);
         setSelected(null);
       } else {
         setQuizCompleted(true);
+
+        // Call the API to save the quiz score
+        try {
+          const userData = await AsyncStorage.getItem('@UserStore:data');
+          const user = JSON.parse(userData);
+          const response = await fetch("https://binwinbackend.onrender.com/quiz_scores", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              user_id: user.user_id, // Replace with the actual user ID
+              score: score, // Replace with the actual score
+            }),
+          });
+
+          const data = await response.json();
+
+          if (response.ok) {
+            console.log("Quiz score saved successfully!", data);
+          } else {
+            console.error("Failed to save quiz score:", data.message || "Unknown error");
+          }
+        } catch (error) {
+          console.error("Error saving quiz score:", error);
+        }
       }
     }, 1000);
   };
@@ -173,7 +202,6 @@ export default function QuizComponent({ navigation }) {
     </View>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
