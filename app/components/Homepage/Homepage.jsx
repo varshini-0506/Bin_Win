@@ -8,7 +8,6 @@ export default function HomePage({ navigation }) {
   const textAnimation = new Animated.Value(0);
   const bounceAnimation = new Animated.Value(0);
 
-  // Animate chatbot text inside a speech bubble
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -26,7 +25,6 @@ export default function HomePage({ navigation }) {
     ).start();
   }, []);
 
-  // Bouncing animation for the chatbot avatar
   useEffect(() => {
     Animated.loop(
       Animated.sequence([
@@ -77,7 +75,7 @@ export default function HomePage({ navigation }) {
         {/* Educational Video Card */}
         <View style={styles.videoCard}>
           <Text style={styles.videoTitle}>
-            Educational Video
+          Join Binwin – Every Waste Counts!♻️
           </Text>
           <View style={styles.videoContainer}>
             <EducationalVideo />
@@ -270,7 +268,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#444',
-    fontFamily: 'Fredoka',
+    fontFamily: 'monospace',
     marginBottom: 8,
   },
   videoContainer: {
