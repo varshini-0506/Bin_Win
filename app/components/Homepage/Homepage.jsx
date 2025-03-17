@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, Image, TouchableOpacity, Animated, ScrollView, StyleSheet } from "react-native";
-import { Home, User, Trophy, Gamepad, Menu, LogOut, PlayCircle, UserPlus } from "lucide-react-native";
-import EducationalVideo from "./EducationalVideo"; // Fix the video loading issue
+import { Home, User, Trophy, Gamepad, Menu, LogOut, PlayCircle, UserPlus, CalendarDays } from "lucide-react-native";
+import EducationalVideo from "./EducationalVideo"; 
 
 export default function HomePage({ navigation }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -103,31 +103,10 @@ export default function HomePage({ navigation }) {
             </Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("Home")}>
-            <Home size={26} color="#379237" />
+          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("Scheduling")}>
+            <CalendarDays size={26} color="#379237" />
             <Text style={styles.sidebarText}>
-              Home
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("Leaderboard")}>
-            <Trophy size={26} color="#379237" />
-            <Text style={styles.sidebarText}>
-              Leaderboard
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("Gamified")}>
-            <Gamepad size={26} color="#379237" />
-            <Text style={styles.sidebarText}>
-              Game
-            </Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.sidebarItem} onPress={() => navigation.navigate("CreateProfile")}>
-            <UserPlus size={26} color="#379237" />
-            <Text style={styles.sidebarText}>
-              Create Profile
+              Scheduling
             </Text>
           </TouchableOpacity>
 

@@ -21,12 +21,12 @@ export default function EducationalVideo() {
         <View style={styles.videoWrapper}>
           <Video
             source={{
-              uri: "https://ik.imagekit.io/zcdsz07ad/bin_win.mp4?updatedAt=1741774860392",
+              uri: "https://ik.imagekit.io/zcdsz07ad/Meet%20Binwin_%20Your%20Eco-Friendly%20Buddy!.mp4?updatedAt=1741848785486",
             }}
             style={styles.video}
             controls
             resizeMode="contain"
-            onEnd={() => setVideoPlaying(false)} // Reset after playing
+            onEnd={() => setVideoPlaying(false)} 
           />
         </View>
       )}
@@ -59,14 +59,14 @@ const styles = StyleSheet.create({
   },
   videoWrapper: {
     width: "100%",
-    height: 200, // Set a fixed height so it doesn't shrink
+    height: 200, 
     borderRadius: 10,
     overflow: "hidden",
-    backgroundColor: "#000", // Prevents weird background issues
+    backgroundColor: "#000", 
   },
   video: {
     width: "100%",
-    height: "100%", // Ensures the video fills the space
+    height: "100%", 
     borderRadius: 10,
   },
 });
